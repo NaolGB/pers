@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Create User, Department, and Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% if error %}
+            <ul class="errorlist">
+                {% for message in error %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+
+        <label for="department">Choose or Create Department:</label>
+        <select name="department">
+            <option value="" selected disabled>Select an existing department or create a new one</option>
+            {% for department in existing_departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="new_department" placeholder="New Department"><br>
+
+        <label for="employee_id">Employee ID:</label>
+        <input type="text" name="employee_id" required><br>
+
+        <label for="access_level">Access Level:</label>
+        <select name="access_level" required>
+            {% for choice in user_access_level %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Create</button>
+    </form>
+{% endblock content %}
