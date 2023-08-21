@@ -19,3 +19,6 @@ def run_tests(test_file=None):
 if __name__ == "__main__":
     run_tests(test_file="user_management/tests/test_models.py")
     run_tests(test_file="user_management/tests/test_views.py")
+    run_tests(test_file="wms/tests/test_models.py")
+    run_tests(test_file="wms/tests/test_views.py")
+
