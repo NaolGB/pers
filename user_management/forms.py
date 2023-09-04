@@ -1,13 +1,13 @@
-from .models import Departments, Profile, UserAccessLevel
-from django.forms import ModelForm, fields
+from .models import Department, Profile, UserAccessLevel, UserRole
+from django.forms import ModelForm, CheckboxSelectMultiple, ModelMultipleChoiceField
 
 
 class DepartementsForm(ModelForm):
     class Meta:
-        model = Departments
+        model = Department
         fields = '__all__'
 
-class ProfileForm(forms.ModelForm):
+class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         fields = '__all__'
@@ -21,4 +21,14 @@ class ProfileForm(forms.ModelForm):
         ]
 
         # Exclude department named 'Superuser' from choices
-        self.fields['department'].queryset = Departments.objects.exclude(name='Superuser')
+        self.fields['department'].queryset = Department.objects.exclude(name='Superuser')
+
+class ProfileFormEditProfile(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['employee_id', 'department', 'access_level', 'user_roles']
+
+    user_roles = ModelMultipleChoiceField(
+        queryset=UserRole.objects.all(),
+        widget=CheckboxSelectMultiple, 
+    )

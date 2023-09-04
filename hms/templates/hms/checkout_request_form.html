@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Request Checkout</h1>
+    {% if success %}
+    <p style="color: green;">{{ success }}</p>
+    {% endif %}
+    <h1>Request Checkout for {{ product.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" step="0.01" min="0.01" max="{{ product.quantity }}" required>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock content %}

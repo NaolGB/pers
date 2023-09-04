@@ -1,21 +1,23 @@
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
-from ..models import Departments, Profile, UserAccessLevel, Company
+from user_management.models import Department, Profile, UserAccessLevel, Company
 
 @pytest.mark.django_db
 def test_company_signup_view(client):
+    # Case: username already taken
     user = User.objects.create_user(username='existinguser', password='testpassword')
     response = client.post(reverse('company_signup'), data={
         'username': 'existinguser',
         'password': 'testpassword',
         'company_name': 'New Company',
     })
+
     assert response.status_code == 200
     assert 'Username already taken' in str(response.content)
 
     assert not Company.objects.filter(name='New Company').exists()  # Company should not be created
-    assert not Departments.objects.filter(name='Superuser').exists()  # Department should not be created
+    assert not Department.objects.filter(name='Superuser').exists()  # Department should not be created
     assert not Profile.objects.filter(user__username='existinguser').exists()  # Profile should not be created
 
     # Case: Company already exists
@@ -25,10 +27,11 @@ def test_company_signup_view(client):
         'password': 'testpassword',
         'company_name': 'Existing Company',
     })
+
     assert response.status_code == 200  # Expect a response as company exists
     assert 'Company name already taken' in str(response.content)
     assert not User.objects.filter(username='newuser').exists()  # User should not be created
-    assert not Departments.objects.filter(name='Superuser').exists()  # Department should not be created
+    assert not Department.objects.filter(name='Superuser').exists()  # Department should not be created
     assert not Profile.objects.filter(user__username='newuser').exists()  # Profile should not be created
 
     # Case: Successful signup
@@ -40,7 +43,7 @@ def test_company_signup_view(client):
     assert response.status_code == 302  # Expect a redirect after successful signup
     assert User.objects.filter(username='newuser').exists()
     assert Company.objects.filter(name='New Company').exists()
-    assert Departments.objects.filter(name='Superuser').exists()  # Check for superuser department creation
+    assert Department.objects.filter(name='Superuser').exists()  # Check for superuser department creation
     assert Profile.objects.filter(user__username='newuser').exists()  # Check for profile creation
 
 @pytest.mark.django_db
@@ -48,7 +51,7 @@ def test_user_login_view(client):
     # Create a user, company, department, and a profile
     user = User.objects.create_user(username='testuser', password='testpassword')
     company = Company.objects.create(name='Test Company', creator=user)
-    department = Departments.objects.create(name='Test Department', company=company)
+    department = Department.objects.create(name='Test Department', company=company)
     profile = Profile.objects.create(user=user, company=company, employee_id='12345', 
                                      department=department, access_level=UserAccessLevel.SUPERUSER)
 
@@ -79,10 +82,9 @@ def test_user_login_view(client):
     })
     if profile.access_level == UserAccessLevel.SUPERUSER:
         assert response.status_code == 302  # Expect a redirect after successful login
-        assert response.url == reverse('create_user')  # Redirect should go to 'create_user' view
+        assert response.url == reverse('power_user_dashboard')  # Redirect should go to 'create_user' view
     else:
-        assert response.status_code == 200  # Expect a successful login response
-        assert 'Successful login' in str(response.content)
+        assert response.status_code == 302  # Expect a successful login response
 
     # Attempting to logout
     response = client.get(reverse('user_login'))
@@ -94,8 +96,8 @@ def test_create_user_department_profile_view(client):
     # Create a superuser profile
     superuser = User.objects.create_user(username='superuser', password='testpassword')
     company = Company.objects.create(name='Test Company', creator=superuser)
-    superuser_department = Departments.objects.create(name='Superuser Department', company=company)
-    poweruser_department = Departments.objects.create(name='Poweruser Department', company=company)
+    superuser_department = Department.objects.create(name='Superuser Department', company=company)
+    poweruser_department = Department.objects.create(name='Poweruser Department', company=company)
     superuser_profile = Profile.objects.create(
         user=superuser,
         company=company,
@@ -110,8 +112,8 @@ def test_create_user_department_profile_view(client):
         user=user,
         company=company,
         employee_id='2',
-        department = Departments.objects.create(name='Normal User Department', company=company),
-        access_level=UserAccessLevel.READ_ONLY
+        department = Department.objects.create(name='Normal User Department', company=company),
+        access_level=UserAccessLevel.FUNCTIONAL_USER
     )
     assert User.objects.filter(username='normaluser').exists()
     assert Profile.objects.filter(employee_id='2', company=company).exists()
@@ -125,7 +127,7 @@ def test_create_user_department_profile_view(client):
         'username': 'test_power_user_1',
         'password': 'newpassword',
     })
-    assert response.status_code == 200  # Expect a successful response
+    assert response.status_code == 302  # Expect a successful response
     client.logout()  # Log out the superuser
 
     # Test non-superuser access case
@@ -133,7 +135,7 @@ def test_create_user_department_profile_view(client):
     response = client.post(reverse('create_user'), data={
         'department': poweruser_department.id,
         'employee_id': '54321',
-        'access_level': UserAccessLevel.READ_ONLY,
+        'access_level': UserAccessLevel.FUNCTIONAL_USER,
         'username': 'test_power_user_2',
         'password': 'otherpassword',
     })

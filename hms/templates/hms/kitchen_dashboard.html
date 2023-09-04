@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if success %}
+    <p style="color: green;">{{ success }}</p>
+    {% endif %}
+    {% if error_message %}
+<p style="color: red;">{{ error_message }}</p>
+{% endif %}
+<h1>Inventory Items</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>sku</th>
+            <th>request checkout</th>
+            <th>checkout request</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in all_inventory %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.sku }}</td>
+            <td>
+                {{item.change_request }}
+            </td>
+            <td>
+                <a href="{% url 'request_checkout' product_id=item.id %}">request checkout</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+{% endblock content %}

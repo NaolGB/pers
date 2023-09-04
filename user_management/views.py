@@ -1,13 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from .models import Departments, Profile, UserAccessLevel, Company
+from .models import Department, Profile, UserAccessLevel, Company, UserRole
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
-
-# user access level test
-def is_superuser(user):
-    return user.profile.access_level == UserAccessLevel.SUPERUSER
+from .forms import ProfileFormEditProfile
+from user_management.user_access_control import has_role, has_access_level
 
 def company_signup(request):
     if request.method == 'POST':
@@ -33,7 +31,7 @@ def company_signup(request):
         company = Company.objects.create(name=company_name, creator=user)
 
         # Create a superuser department and assign it to the user's profile
-        superuser_department = Departments.objects.create(name='Superuser', company=company)
+        superuser_department = Department.objects.create(name='Superuser', company=company)
         profile = Profile.objects.create(user=user, company=company, department=superuser_department, access_level=access_level)
 
         return redirect('user_login')
@@ -53,10 +51,17 @@ def user_login(request):
                 profile = user.profile  # Try to get the user's profile
                 if profile:
                     login(request, user)
+                    print(user.profile.access_level, user.profile.user_roles)
                     if profile.access_level == UserAccessLevel.SUPERUSER:
-                        return redirect('create_user')
-                    else:
-                        return HttpResponse('Successful login')
+                        return redirect('power_user_dashboard')
+                    elif profile.access_level == UserAccessLevel.POWER_USER:
+                        return redirect('power_user_dashboard')
+                    elif profile.access_level == UserAccessLevel.FUNCTIONAL_LEADER:
+                        if has_any_role(['HMS-WRH']): # store manager
+                            return redirect('warehouse_dashboard')
+                    elif profile.access_level == UserAccessLevel.FUNCTIONAL_USER:
+                        if has_any_role(['HMS-KCN']): # kitchen user
+                            return redirect('kitchen_dashboard')
                 else:
                     error = 'User does not have a profile'
             except Profile.DoesNotExist:
@@ -76,7 +81,10 @@ def user_login(request):
 
     return render(request, 'user_management/login.html', {'error': error})
 
-@user_passes_test(is_superuser)
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
+)
 def create_user_department_profile(request):
     error = []  # List to store error messages
 
@@ -94,9 +102,9 @@ def create_user_department_profile(request):
         new_department_name = request.POST.get('new_department')
 
         if department_id:
-            department = Departments.objects.get(id=department_id)
+            department = Department.objects.get(id=department_id)
         elif new_department_name:
-            department, created = Departments.objects.get_or_create(name=new_department_name, company=company)
+            department, created = Department.objects.get_or_create(name=new_department_name, company=company)
         else:
             error.append("Please select an existing department or enter a new department name.")
 
@@ -124,11 +132,44 @@ def create_user_department_profile(request):
                 company=company,  # Assign the logged-in user's company
             )
 
-            return HttpResponse("Succesfully created user")
+            return redirect('power_user_dashboard')
+        
 
     context = {
-        'existing_departments': Departments.objects.filter(company=company),
+        'existing_department': Department.objects.filter(company=company),
         'user_access_level': UserAccessLevel.choices,
         'error': error,  # Pass the error messages to the template
     }
     return render(request, 'user_management/create_user.html', context)
+
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
+)
+def power_user_dashboard(request):
+    context = {
+        'profiles': Profile.objects.all()
+    }
+
+    return render(request, 'user_management/power_user_dashboard.html', context)
+
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
+)
+def edit_profile(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id)
+
+    if request.method == 'POST':
+        form = ProfileFormEditProfile(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('power_user_dashboard')
+    else:
+        form = ProfileFormEditProfile(instance=profile)
+
+    context = {
+        'form': form, 
+        'profile': profile,
+    }
+    return render(request, 'user_management/edit_profile.html', context)

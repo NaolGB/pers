@@ -44,7 +44,13 @@ Enumeration representing different access levels for users in an ERP system.
         on monitoring and auditing user activity within the ERP system to ensure compliance 
         and security.
 
+    'Supervisor' - oversees a team or teams
+    "Functional Leader" - can make manupilations in a user role. Ex: a user with  FUNCTIONAL_LEADER access and WAREHOUSE role can approve/deny checkout form warehouse but other users will only be able to request checkout
+
 - different users have different acces depending on profile.access_level and 
 profile.access_department
 - some apps need specific access_department
     - wms: warehouse
+
+UserRole
+ - used to easily assign 
