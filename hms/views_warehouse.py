@@ -7,8 +7,6 @@ from .forms import ProductForm, WarehouseForm
 from user_management.models import UserAccessLevel
 from user_management.user_access_control import has_access_level, has_role
 
-
-
 @login_required
 @user_passes_test(
     lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
@@ -68,8 +66,7 @@ def restock_product(request, product_id):
         
         if quantity > 0:
             transaction = HMSStockTransaction.objects.create(
-                case_id=generate_case_id(),
-                warehouse=product.warehouse,
+                transaction_id=generate_case_id(),
                 product=product,
                 user=request.user,
                 transaction=HMSTransactionType.RESTOCK,
@@ -96,9 +93,9 @@ def request_checkout(request, product_id):
     if request.method == 'POST':
         quantity = float(request.POST.get('quantity', 0))
         if 0 < quantity <= product.quantity:
-            case_id = generate_case_id()
+            transaction_id = generate_case_id()
             transaction = HMSStockTransaction.objects.create(
-                case_id=case_id,
+                transaction_id=transaction_id,
                 description="Checkout request",
                 product=product,
                 user=request.user,
@@ -146,10 +143,9 @@ def product_transaction_list(request, product_id):
     lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
     has_role(user, ['HMS-WRH', 'HMS-SUR'])
 )
-def close_checkout(request, case_id):
+def close_checkout(request, transaction_id):
     checkout_transaction = get_object_or_404(HMSStockTransaction, 
-                                case_id=case_id, 
-                                transaction=HMSTransactionType.CHECKOUT_REQUEST)
+        transaction_id=transaction_id, transaction=HMSTransactionType.CHECKOUT_REQUEST)
     
     # save request change
     if request.method == 'POST':
@@ -170,9 +166,8 @@ def close_checkout(request, case_id):
             checkout_transaction.product.quantity -= checkout_transaction.quantity
 
         new_transaction = HMSStockTransaction.objects.create(
-            case_id=case_id,
+            transaction_id=transaction_id,
             description="Checkout Approved",
-            warehouse=checkout_transaction.warehouse,
             product=checkout_transaction.product,
             transaction=transaction_type,
             quantity=checkout_transaction.quantity,

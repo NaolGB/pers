@@ -1,88 +1,49 @@
 import pytest
-from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 from django.contrib.auth.models import User
 from user_management.models import Company, Department, Profile, UserRole, UserAccessLevel
 
-@pytest.mark.django_db
-def test_company_creation():
-    company = Company.objects.create(name='Test Company', creator=User.objects.create_user(
-        'creator', 'creator@example.com', 'password')
-        )
-    assert str(company) == 'Test Company'
+# validation test
+# ===============
+def test_company(sample_company):
+    # test creation
+    assert Company.objects.filter(name='Test Company').exists()
+
+    # test unique company name
+    with pytest.raises(IntegrityError):
+        with transaction.atomic():
+            Company.objects.create(name='Test Company')
+
+    assert Company.objects.filter(name='Test Company').count() == 1
+
+def test_department(sample_department, sample_company):
+    # test creation
+    assert Department.objects.filter(name='Test Department').exists()
+
+    # test unique company+department name
+    with pytest.raises(IntegrityError):
+        with transaction.atomic():
+            Department.objects.create(name='Test Department', company=sample_company)
+
+    assert Department.objects.filter(name='Test Department').count() == 1
 
 @pytest.mark.django_db
-def test_unique_company_name():
-    Company.objects.create(name='Test Company', creator=User.objects.create_user(
-        'creator', 'creator@example.com', 'password')
-        )
-    
+def test_profile(sample_profile, sample_user, sample_uuid, sample_company, sample_department):
+    # test creationn
+    assert Profile.objects.filter(user=sample_user).exists()
+    assert Profile.objects.count() == 1
+
+    # test unique company+employee_id
     with pytest.raises(IntegrityError):
-        Company.objects.create(name='Test Company', creator=User.objects.create_user(
-            'creator2', 'creator2@example.com', 'password')
+        with transaction.atomic():
+            Profile.objects.create(
+                user = sample_user,
+                employee_id = sample_uuid,
+                company = sample_company,
+                department = sample_department
             )
 
-@pytest.mark.django_db
-def test_department_creation():
-    company = Company.objects.create(name='Test Company', creator=User.objects.create_user(
-        'creator', 'creator@example.com', 'password')
-        )
-    department = Department.objects.create(name='Test Department', company=company)
-    assert str(department) == 'Test Department'
+    assert Profile.objects.filter(user=sample_user).count() == 1
 
-@pytest.mark.django_db
-def test_unique_department_name_within_company():
-    company = Company.objects.create(name='Test Company', creator=User.objects.create_user(
-        'creator', 'creator@example.com', 'password')
-        )
-    Department.objects.create(name='Test Department', company=company)
-    
-    with pytest.raises(IntegrityError):
-        Department.objects.create(name='Test Department', company=company)
-
-@pytest.mark.django_db
-def test_create_profile():
-    company = Company.objects.create(name="Test Company", creator=User.objects.create_user("creator"))
-    department = Department.objects.create(name="Test Department", company=company)
-    user = User.objects.create_user("testuser", password="testpassword")
-    # role = UserRole.objects.create(name=UserRole.RoleChoices.WAREHOUSE)
-
-    profile = Profile.objects.create(
-        user=user,
-        employee_id="12345",
-        company=company,
-        department=department,
-        access_level=UserAccessLevel.SUPERUSER,
-    )
-    # profile.role.add(role)
-
-    assert Profile.objects.count() == 1
-    assert profile.user == user
-    assert profile.employee_id == "12345"
-    assert profile.company == company
-    assert profile.department == department
-    assert profile.access_level == UserAccessLevel.SUPERUSER
-    # assert role in profile.role.all()
-
-@pytest.mark.django_db
-def test_unique_company_employee_id():
-    company = Company.objects.create(name="Test Company", creator=User.objects.create_user("creator"))
-    department = Department.objects.create(name="Test Department", company=company)
-    user = User.objects.create_user("testuser", password="testpassword")
-
-    profile1 = Profile.objects.create(
-        user=user,
-        employee_id="12345",
-        company=company,
-        department=department,
-        access_level=UserAccessLevel.SUPERUSER,
-    )
-
-    with pytest.raises(IntegrityError):
-        profile2 = Profile.objects.create(
-            user=user,
-            employee_id="12345",
-            company=company,
-            department=department,
-            access_level=UserAccessLevel.SUPERUSER,
-        )
+# load test
+# ===============

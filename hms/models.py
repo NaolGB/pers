@@ -15,7 +15,7 @@ class HMSTransactionType(models.TextChoices):
 
 class HMSWarehouse(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     location = models.CharField(max_length=200, blank=True, null=True)
 
@@ -50,7 +50,7 @@ class HMSProduct(models.Model):
 
 class HMSStockTransaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    case_id = models.UUIDField(editable=False)
+    transaction_id = models.UUIDField(editable=False)
     description = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(HMSProduct, on_delete=models.PROTECT)
