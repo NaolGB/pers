@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {% block base_content %}
-    {% block content %}
-      <nav>
-        <a href="{% url 'landing_home' %}">Home</a>
-        <a href="{% url 'landing_home' %}">Blog</a>
-        <a href="{% url 'landing_home' %}">Join</a>
-        <a href="{% url 'landing_home' %}">Learn</a>
-        <a href="{% url 'landing_home' %}">Login</a>
-      </nav>
-    {% endblock content %}
+<nav>
+  <a href="{% url 'landing_home' %}">Home</a>
+  <a href="{% url 'landing_home' %}">Blog</a>
+  <a href="{% url 'company_signup' %}">Join</a>
+  <a href="{% url 'landing_home' %}">Learn</a>
+  <a href="{% url 'user_login' %}">Login</a>
+</nav>
+
+{% block content %}
+
+{% endblock content %}
+      
 {% endblock base_content %}

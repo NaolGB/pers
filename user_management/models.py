@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 class UserAccessLevel(models.TextChoices):
@@ -35,7 +34,7 @@ class UserRole(models.Model):
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name
+        return f'{self.app} | {self.name}'
 
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

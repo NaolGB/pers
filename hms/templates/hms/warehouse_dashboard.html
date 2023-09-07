@@ -2,42 +2,47 @@
 
 {% block content %}
     {% if success %}
-    <p style="color: green;">{{ success }}</p>
-    {% endif %}
+        <p style="color: green;">{{ success }}</p>
+        {% endif %}
     {% if error_message %}
-<p style="color: red;">{{ error_message }}</p>
-{% endif %}
-<h1>Inventory Items</h1>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>SKU</th>
-            <th>Quantity</th>
-            <th>Minimum Stock</th>
-            <th>Maximum Stock</th>
-            <th>change_request</th>
-            <th>restock</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in all_inventory %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.sku }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.minimum_stock }}</td>
-            <td>{{ item.maximum_stock }}</td>
-            <td>
-                <a href="{% url 'product_transaction_list' product_id=item.id %}">{{ item.change_request }}</a>
-            </td>
-            <td>
-                <a href="{% url 'restock_product' product_id=item.id %}">restock</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+<div id="main-content">
+    <h1>Inventory Items</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Quantity</th>
+                <th>Minimum Stock</th>
+                <th>Maximum Stock</th>
+                <th>change_request</th>
+                <th>restock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in all_inventory %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.sku }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.minimum_stock }}</td>
+                <td>{{ item.maximum_stock }}</td>
+                <td>
+                    <a href="{% url 'product_transaction_list' product_id=item.id %}">{{ item.change_request }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'restock_product' product_id=item.id %}">restock</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 <br>
+</div>
+
 <a href="{% url 'add_product' %}">Add New Item</a>
+
 {% endblock content %}

@@ -66,60 +66,48 @@ def user_login(request):
 
     return render(request, 'user_management/login.html', {'error_message': error_message})
 
+
+@login_required
+def navigate_user_home(request):
+    return redirect(get_redirect(request.user))
+
 @login_required
 @user_passes_test(
     lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
 )
 def create_user_department_profile(request):
-    error_message = None
-
     # Get the logged-in user's company
-    try:
-        profile = request.user.profile
+    profile = request.user.profile
+    if profile:
         company = profile.company
-    except Profile.DoesNotExist:
-        error_message.append("Profile does not exist")
+    else:
+        context['error_message'] = "Profile does not exist"
+        return render(request, 'user_management/create_user.html', context)
+    
+    error_message = None
+    context = {
+        'user_access_level': UserAccessLevel.choices,
+        'department': Department.objects.filter(company=company),
+        'error_message': error_message,
+    }
 
     if request.method == 'POST':
-        # create or add department
-        department_id = request.POST.get('department')
-        new_department_name = request.POST.get('new_department')
-
-        if department_id:
-            department = Department.objects.get(id=department_id)
-        elif new_department_name:
-            department, created = Department.objects.get_or_create(name=new_department_name, company=company)
-        else:
-            error_message = "Please select an existing department or enter a new department name."
-            return render(
-                request, 
-                'user_management/create_user.html', 
-                {'error_message': error_message}
-            )
+        username = request.POST['username']
+        password = request.POST['password']
+        access_level = request.POST['access_level']
+        department_id = request.POST['department']
+        department = Department.objects.get(id=department_id)
 
         # validate employee id
         employee_id = request.POST['employee_id']
         if Profile.objects.filter(employee_id=employee_id).exists():
-            error_message = "Employee ID already exists. Please choose a different Employee ID."
-            return render(
-                request, 
-                'user_management/create_user.html', 
-                {'error_message': error_message}
-            )
-        access_level = request.POST['access_level']
+            context['error_message'] = "Employee ID already exists. Please choose a different Employee ID."
+            return render(request, 'user_management/create_user.html', context)
 
-        # create user, after department and employee id to ensure no user is created 
-        # without valid department and employee id
-        username = request.POST['username']
         if User.objects.filter(username=username).exists():
-            error_message = "Username already exists. Please choose a different username."
-            return render(
-                request, 
-                'user_management/create_user.html', 
-                {'error_message': error_message}
-            )
-        password = request.POST['password']
-
+            context['error_message'] = "Username already exists. Please choose a different username."
+            return render(request, 'user_management/create_user.html', context)
+        
         if error_message is None:
             user = User.objects.create_user(username=username, password=password)
 
@@ -128,16 +116,11 @@ def create_user_department_profile(request):
                 employee_id=employee_id,
                 department=department,
                 access_level=access_level,
-                company=company,  # Assign the logged-in user's company
+                company=company, 
             )
 
             return redirect('power_user_dashboard')
 
-    context = {
-        'existing_department': Department.objects.filter(company=company),
-        'user_access_level': UserAccessLevel.choices,
-        'error_message': error_message,  # Pass the error_message messages to the template
-    }
     return render(request, 'user_management/create_user.html', context)
 
 @login_required
@@ -146,7 +129,7 @@ def create_user_department_profile(request):
 )
 def power_user_dashboard(request):
     context = {
-        'profiles': Profile.objects.all()
+        'profiles': Profile.objects.filter(company=request.user.profile.company)
     }
 
     return render(request, 'user_management/power_user_dashboard.html', context)
@@ -171,3 +154,18 @@ def edit_profile(request, profile_id):
         'profile': profile,
     }
     return render(request, 'user_management/edit_profile.html', context)
+
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER])
+)
+def add_department(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        company = request.user.profile.company  
+
+        department = Department.objects.create(name=name, company=company)
+
+        return redirect('power_user_dashboard')  
+
+    return render(request, 'user_management/add_department.html')

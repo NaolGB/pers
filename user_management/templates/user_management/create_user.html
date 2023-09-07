@@ -15,13 +15,13 @@
         <input type="password" name="password" required><br>
 
         <label for="department">Choose or Create Department:</label>
-        <select name="department">
-            <option value="" selected disabled>Select an existing department or create a new one</option>
-            {% for department in existing_departments %}
-                <option value="{{ department.id }}">{{ department.name }}</option>
+        <select name="department" required>
+            <option value="" disabled selected>Select an author</option>
+            {% for choice in department %}
+              <option value="{{ choice.id }}">{{ choice.name }}</option>
             {% endfor %}
-        </select>
-        <input type="text" name="new_department" placeholder="New Department"><br>
+          </select>
+          <br>
 
         <label for="employee_id">Employee ID:</label>
         <input type="text" name="employee_id" required><br>
