@@ -1,0 +1,38 @@
+{% extends 'platform_base.html' %}
+
+{% block middle_column %}
+<h1>Create User, Department, and Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% if error_message %}
+            {{ error_message }}
+        {% endif %}
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+
+        <label for="department">Choose or Create Department:</label>
+        <select name="department" required>
+            <option value="" disabled selected>Select an author</option>
+            {% for choice in department %}
+              <option value="{{ choice.id }}">{{ choice.name }}</option>
+            {% endfor %}
+          </select>
+          <br>
+
+        <label for="employee_id">Employee ID:</label>
+        <input type="text" name="employee_id" required><br>
+
+        <label for="access_level">Access Level:</label>
+        <select name="access_level" required>
+            {% for choice in user_access_level %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Create</button>
+    </form>
+{% endblock middle_column %}

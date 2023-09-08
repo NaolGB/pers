@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block base_content %}
+  {% comment %} left sidebar {% endcomment %}
+  <div class='left-column'>
+    <nav>
+      {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}">l</a>
+      {% else %}
+        <a href="{% url 'user_login' %}">l</a>
+      {% endif %}
+      <br>
+  
+      <a href="{% url 'navigate_user_home' %}">h</a>
+    </nav>
+  </div>
+
+  {% comment %} main bar {% endcomment %}
+  <div class='middle-column'>
+    {% block middle_column %}
+
+    {% endblock middle_column %}
+  </div>
+
+  {% comment %} right sidebar {% endcomment %}
+  <div class='right-column'>
+    {% block right_column %}
+
+    {% endblock right_column %}
+  </div>
+{% endblock base_content %}
+

@@ -1,0 +1,15 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <h2>Add Warehouse</h2>
+    <form method="post">
+    {% csrf_token %}
+    <label for="name">Warehouse Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location">
+    <br>
+    <input type="submit" value="Add Warehouse">
+    </form>
+{% endblock content %}

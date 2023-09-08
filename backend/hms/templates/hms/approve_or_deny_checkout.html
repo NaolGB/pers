@@ -1,0 +1,14 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <h1>Checkout Request</h1>
+    <p>Product: {{ transaction.product.name }}</p>
+    <p>Quantity: {{ transaction.quantity }}</p>
+    <p>Description: {{ transaction.description }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="approve">Approve</button>
+        <button type="submit" name="action" value="deny">Deny</button>
+    </form>
+{% endblock content %}

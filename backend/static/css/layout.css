@@ -1,0 +1,42 @@
+/* Create a container to hold the columns */
+.container {
+    display: flex;
+    height: 100%;
+}
+
+/* Define styles for each column */
+.left-column, .middle-column, .right-column {
+    box-sizing: border-box; /* Include padding in column's width */
+    border: 0.5px solid #ccc; /* Add borders for separation */
+}
+
+/* You can further style each column as needed */
+.left-column {
+    padding: 10px; 
+    flex: 0.3;
+}
+
+.middle-column {
+    padding: 20px; 
+    flex: 7;
+}
+
+.right-column {
+    padding: 20px; 
+    flex: 3.7;
+}
+
+/* item row container */
+.item-row {
+    display: flex; /* Use flexbox to create a row layout */
+    justify-content: space-between; /* Space items evenly along the row */
+    align-items: center; /* Center items vertically within the row */
+    border: 1px solid #ccc; /* Add a border for styling */
+    padding: 10px; /* Add padding to create spacing between elements */
+}
+
+/* Style individual item elements within the row */
+.item-column {
+    flex: 1; /* Distribute available space equally among items */
+    padding: 5px; /* Add padding to each item for spacing */
+}
