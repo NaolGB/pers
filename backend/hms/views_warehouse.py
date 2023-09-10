@@ -32,8 +32,9 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
+            # save product
             product = form.save()
-            print('Yes!')
+
             return HttpResponse('Successful update')
     else:
         form = ProductForm()
@@ -52,6 +53,11 @@ def product_list(request):
     }
     return render(request, 'hms/product_list.html', context)
 
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+)
 def warehouse_dashboard(request):
     middle_column_content = product_list(request).content.decode()
     right_column_content = add_product(request).content.decode()
