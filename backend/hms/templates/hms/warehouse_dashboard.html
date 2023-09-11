@@ -1,7 +1,8 @@
 {% extends 'platform_base.html' %}
 
+<a href="{% url 'add_product' %}">Add New Item</a>
 {% block middle_column %}
-  {{middle_column_content|safe}}
+    {{middle_column_content|safe}}
 {% endblock middle_column %}
 
 {% block right_column %}

@@ -1,9 +1,11 @@
-<div id='add_product_section'>
+<div id='add-product-section'>
     <h1>Add Product</h1>
     <form method="post" id="hms-add-product-form"> <!-- Add an ID to the form for easy targeting -->
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Add Product</button>
+        <button id="submit-new-product" type="submit">Add Product</button>
+        {% comment %} <input id="submit-new-product" type="button" value="Add product"> {% endcomment %}
+
     </form>
 </div>
 
@@ -11,6 +13,15 @@
 script to handle an async for submission, without reloading the entire page
 {% endcomment %}
 <script type="text/javascript">
+    // join the hmsproduct websocket to send message when product is added
+    // add template name to variable name to avoid redeclaration error
+    // on combined templates (in sidebar)
+    const addProductCompanyId = "{{company.id|safe}}";
+    const addProducChatSocket = new WebSocket('ws://'+ window.location.host+ '/ws/hms/hmsproduct/'
+            + addProductCompanyId+ '/'
+    );
+
+
     // Function to handle form submission and update the section
     function updateAddProductSection(event) {
         event.preventDefault(); // Prevent the default form submission behavior (prevent page reload)
@@ -26,7 +37,7 @@ script to handle an async for submission, without reloading the entire page
         })
         .then(response => response.text())
         .then(data => {
-            document.getElementById('add_product_section').innerHTML = data;
+            document.getElementById('add-product-section').innerHTML = data;
         })
         .catch(error => {
             console.error(error);
@@ -36,4 +47,17 @@ script to handle an async for submission, without reloading the entire page
     // Add an event listener to the form for AJAX submission
     const addProductForm = document.getElementById('hms-add-product-form');
     addProductForm.addEventListener('submit', updateAddProductSection);
+
+    // send product added message to the hmsproduct websocket
+    document.querySelector('#submit-new-product').onclick = function(e) {
+        message = "product added"
+        addProducChatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        message = "";
+    };
+
+    addProducChatSocket.onclose = function(e) {
+        console.error('Websocket closed');
+    };
 </script>
