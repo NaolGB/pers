@@ -1,3 +1,4 @@
+<div id='hms-product-list-html-template-content'>
 {% for item in all_inventory %}
     <div class="item-row">
         <div class="item-column">{{ item.name }}</div>
@@ -15,5 +16,49 @@
         </div>
     </div>
 {% endfor %}
+</div>
 
-<a href="{% url 'add_product' %}">Add New Item</a>
+    <script>
+        // add template name to variable name to avoid redeclaration error
+        // on combined templates (in sidebar)
+        const productListCompanyId = "{{company.id|safe}}"; 
+
+        const productListChatSocket = new WebSocket('ws://'+ window.location.host+ '/ws/hms/hmsproduct/'
+            + productListCompanyId+ '/'
+        );
+
+        productListChatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            updateTemplate()
+        };
+
+        productListChatSocket.onclose = function(e) {
+            console.error('Websocket closed');
+        };
+
+        // function to update the inventory, called in message receive
+        function updateTemplate() {
+            fetch("{% url 'product_list' %}") 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(htmlData => {
+                    const tempDiv = document.createElement('div'); // Create a temporary div element
+                    tempDiv.innerHTML = htmlData; // Set its innerHTML to the fetched HTML data
+                    const updatedHtmlData = tempDiv.querySelector('#hms-product-list-html-template-content').innerHTML; // Get the desired element
+                    
+                    if (updatedHtmlData) {
+                        document.getElementById('hms-product-list-html-template-content').innerHTML = updatedHtmlData;
+                    } else {
+                        console.error('Element with id "hms-product-list-html-template-content" not found in the updated HTML.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching updated data:', error);
+                });
+        }
+
+    </script>

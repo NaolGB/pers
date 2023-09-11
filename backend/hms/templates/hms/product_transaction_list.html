@@ -15,7 +15,7 @@
             {% for transaction in transactions %}
             <tr>
                 <td>
-                    <a href="{% url 'close_checkout' case_id=transaction.case_id %}">
+                    <a href="{% url 'close_checkout' case_id=transaction.transaction_id %}">
                     {{ transaction.get_transaction_display }}
                     </a>
                 </td>

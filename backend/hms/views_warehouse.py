@@ -39,7 +39,10 @@ def add_product(request):
     else:
         form = ProductForm()
 
-    context = {'form': form}
+    context = {
+        'form': form,
+        'company': request.user.profile.company
+    }
     return render(request, 'hms/add_product.html', context)
 
 @login_required
@@ -50,6 +53,7 @@ def add_product(request):
 def product_list(request):
     context = {
         'all_inventory': HMSProduct.objects.all().order_by('-change_request'),
+        'company': request.user.profile.company
     }
     return render(request, 'hms/product_list.html', context)
 
@@ -138,13 +142,13 @@ def product_transaction_list(request, product_id):
         product=product,
         transaction=HMSTransactionType.CHECKOUT_REQUEST
     )
-    case_ids_checkout_request = checkout_request_transactions.values_list('case_id', flat=True)
+    transaction_ids_checkout_request = checkout_request_transactions.values_list('transaction_id', flat=True)
     checkout_approve_deny_transactions = HMSStockTransaction.objects.filter(
         product=product,
         transaction__in=[HMSTransactionType.CHECKOUT_APPROVE, HMSTransactionType.CHECKOUT_DENY]
     )
     filtered_checkout_request_transactions = checkout_request_transactions.exclude(
-        case_id__in=checkout_approve_deny_transactions.values_list('case_id', flat=True)
+        transaction_id__in=checkout_approve_deny_transactions.values_list('transaction_id', flat=True)
     )
     
     context = {
