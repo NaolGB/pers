@@ -1,23 +1,24 @@
-import React from 'react';
-import AppRouter from './components/AppRouter';
+import React, {useState} from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/user_management/LoginPage';
+import Panes from './components/Panes';
+
 
 function App() {
+
+  const [activeComponent, setActiveComponent] = useState<React.ReactNode | null>(null);
+
   return (
-    <div>
-      <h1>Hi NY!</h1>
-      <div id="dock-pane">
-
-      </div>
-
-      <div id="primary-pane">
-
-      </div>
-
-      <div id="secondary-pane">
-        
-      </div>
-      <AppRouter />
-    </div>
+    <BrowserRouter>
+        <Routes>
+            <Route path="user/login" element={<LoginPage/>}>
+              <Panes
+                primaryPane={null}
+                secondaryPane={<LoginPage />}
+              />
+            </Route>
+        </Routes>
+    </BrowserRouter>
   );
 }
 
