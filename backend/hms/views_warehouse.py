@@ -21,7 +21,7 @@ def add_warehouse(request):
 
         return redirect('power_user_dashboard')  
 
-    return render(request, 'hms/add_warehouse.html')
+    return render(request, 'hms/components/add_warehouse.html')
 
 @login_required
 @user_passes_test(
@@ -43,7 +43,7 @@ def add_product(request):
         'form': form,
         'company': request.user.profile.company
     }
-    return render(request, 'hms/add_product.html', context)
+    return render(request, 'hms/components/add_product.html', context)
 
 @login_required
 @user_passes_test(
@@ -53,9 +53,9 @@ def add_product(request):
 def product_list(request):
     context = {
         'all_inventory': HMSProduct.objects.all().order_by('-change_request'),
-        'company': request.user.profile.company
     }
-    return render(request, 'hms/product_list.html', context)
+    print(context['all_inventory'])
+    return render(request, 'hms/components/product_list.html', context)
 
 @login_required
 @user_passes_test(
@@ -66,10 +66,11 @@ def warehouse_dashboard(request):
     middle_column_content = product_list(request).content.decode()
     right_column_content = add_product(request).content.decode()
     context = {
-        'middle_column_content': middle_column_content,
-        'right_column_content': right_column_content
+        'primary_pane_html': middle_column_content,
+        'secondary_pane_html': right_column_content
     }
-    return render(request, 'hms/warehouse_dashboard.html', context)
+    # return render(request, 'hms/warehouse_dashboard.html', context)
+    return render(request, 'hms/hms.html', context)
 
 @login_required
 @user_passes_test(
@@ -103,7 +104,7 @@ def restock_product(request, product_id):
         else:
             error_message = "Restock quantity must be positive."
 
-    return render(request, 'hms/restock_form.html', {'product': product, 'error_message': error_message, 'success': success})
+    return render(request, 'hms/components/restock_form.html', {'product': product, 'error_message': error_message, 'success': success})
 
 @login_required
 def request_checkout(request, product_id):
@@ -127,7 +128,7 @@ def request_checkout(request, product_id):
             product.save()
             return redirect('kitchen_dashboard')  
 
-    return render(request, 'hms/checkout_request_form.html', {'product': product})
+    return render(request, 'hms/components/checkout_request_form.html', {'product': product})
 
 @login_required
 @user_passes_test(
@@ -156,7 +157,7 @@ def product_transaction_list(request, product_id):
         'transactions': filtered_checkout_request_transactions,
     }
     
-    return render(request, 'hms/product_transaction_list.html', context)
+    return render(request, 'hms/components/product_transaction_list.html', context)
 
 @login_required
 @user_passes_test(
@@ -199,4 +200,4 @@ def close_checkout(request, transaction_id):
         return redirect('warehouse_dashboard')
 
     context = {'transaction': checkout_transaction}
-    return render(request, 'hms/approve_or_deny_checkout.html', context)
+    return render(request, 'hms/components/approve_or_deny_checkout.html', context)

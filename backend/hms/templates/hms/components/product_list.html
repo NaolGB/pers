@@ -1,0 +1,23 @@
+<div id='hms-product-list-html-template-content'>
+{% for item in all_inventory %}
+    <div class="item-row">
+        <div class="item-column">{{ item.name }}</div>
+        <div class="item-column">{{ item.sku }}</div>
+        <div class="item-column">{{ item.quantity }}</div>
+        <div class="item-column">
+            <a href="{% url 'product_transaction_list' product_id=item.id %}">
+                {{ item.change_request }}
+            </a>
+        </div>
+        <div  class="item-column">
+            <a href="{% url 'restock_product' product_id=item.id %}">
+                restock
+            </a>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<script>
+    
+</script>
