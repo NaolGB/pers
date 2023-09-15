@@ -1,0 +1,19 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <h3>የዕቃው ስም: {{ product.name }}</h1>
+    <p>ያለው ብዛት: {{ product.quantity }}</p>
+
+    {% if error_message %}
+        <p class="text-danger">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="restock_quantity">የሚጨመረው ብዛት:</label>
+            <input type="number" name="restock_quantity" class="form-control" required step="0.01">
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">ጨምር</button>
+    </form>
+{% endblock content %}

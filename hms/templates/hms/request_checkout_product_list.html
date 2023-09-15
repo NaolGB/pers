@@ -1,0 +1,39 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
+    {% endif %}
+
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+        
+    <h3>የዕቃዎች ዝርዝር</h1>
+    <table class="table table-striped table-hover mt-3">
+        <thead>
+            <tr>
+                <th scope="col" class="col-1">ተራ ቁ.</th>
+                <th scope="col">ስም</th>
+                <th scope="col">አይነት</th>
+                <th scope="col">ያልተመለሱ ጥያቄዎች</th>
+                <th scope="col">ወጪ ጠይቅ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in all_inventory %}
+            <tr>
+                <th scope="row" class="col-1">{{forloop.counter}}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.sku }}</td>
+                <td>
+                    {{item.change_request }}
+                </td>
+                <td>
+                    <a href="{% url 'request_checkout' product_id=item.id %}">ጠይቅ</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

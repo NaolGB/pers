@@ -1,0 +1,51 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="col-md-6 mx-auto">
+      <h2>አዲስ ተጠቃሚ ጨምር</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% if error_message %}
+          <div class="alert alert-danger">{{ error_message }}</div>
+        {% endif %}
+
+        <div class="form-group">
+          <label for="username">መለያ:</label>
+          <input type="text" class="form-control" name="username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">የይለፍ ቃል:</label>
+          <input type="password" class="form-control" name="password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="department">የስራ ክፍል:</label>
+          <select class="form-control" name="department" required>
+            <option value="" disabled selected>Select a department</option>
+            {% for choice in department %}
+              <option value="{{ choice.id }}">{{ choice.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="employee_id">መታወቂያ ቁጥር:</label>
+          <input type="text" class="form-control" name="employee_id" required>
+        </div>
+
+        <div class="form-group">
+          <label for="access_level">የፈቃድ ደረጃ:</label>
+          <select class="form-control" name="access_level" required>
+            {% for choice in user_access_level %}
+              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">ጨምር</button>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

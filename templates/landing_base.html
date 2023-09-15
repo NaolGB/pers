@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block base_content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="btn-group" role="group" aria-label="Basic outlined example">
+      <button 
+          type="button" class="btn btn-outline-primary"
+          onclick="window.location.href='{% url 'landing_home'%}'"
+      >
+          መነሻ
+      </button>
+      <button 
+          type="button" class="btn btn-outline-primary"
+          onclick="window.location.href='{% url 'company_signup'%}'"
+      >
+          አዲስ ድርጅት መዝግብ
+      </button>
+      <button 
+          type="button" class="btn btn-outline-primary"
+          onclick="window.location.href='{% url 'user_login'%}'"
+      >
+          ወደ ሲስተም ግባ
+      </button>
+  </div>
+</div>
+
+{% block landing_content %}
+
+{% endblock landing_content %}
+      
+{% endblock base_content %}

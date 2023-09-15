@@ -1,0 +1,12 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <div id='add-product-section'>
+        <h1>Add Product</h1>
+        <form method="post" id="hms-add-product-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button id="submit-new-product" type="submit">Add Product</button>
+        </form>
+    </div>
+{% endblock content %}

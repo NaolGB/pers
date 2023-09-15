@@ -1,0 +1,15 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h3>የስራ ክፍል መጨመሪያ ፎርም</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">የስራ ክፍል ስም:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">ጨምር</button>
+        </form>
+    </div>
+{% endblock content %}

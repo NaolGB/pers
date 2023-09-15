@@ -1,0 +1,20 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <h1>የወጪ ጥያዊ</h1>
+    <p>ዕቃ: {{ transaction.product.name }}</p>
+    <p>የተጠየቀው ብዛት: {{ transaction.quantity }}</p>
+    <p>ዝርዝር: {{ transaction.description }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-grid gap-2 d-md-block">
+            <button class="btn btn-primary" type="submit" name="action" value="approve">
+                ፍቀድ
+            </button>
+            <button class="btn btn-danger" type="submit" name="action" value="deny">
+                ከልክል
+            </button>
+          </div>
+    </form>
+{% endblock content %}

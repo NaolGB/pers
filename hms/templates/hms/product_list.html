@@ -1,0 +1,47 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <div class="m-3">
+        <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <button 
+                type="button" class="btn btn-outline-primary"
+                onclick="window.location.href='{% url 'add_product'%}'"
+            >
+                አዲስ ዕቃ ጨምር
+            </button>
+          </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+              <th scope="col" class="col-1">ተራ ቁ.</th>
+              <th scope="col">ስም</th>
+              <th scope="col">አይነት</th>
+              <th scope="col">ብዛት</th>
+              <th scope="col">የጥያቄ ብዛት</th>
+              <th scope="col">ጭማሪ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in all_inventory %}
+                <tr>
+                    <th scope="row" class="col-1">{{forloop.counter}}</th>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.sku }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <a href="{% url 'product_transaction_list' product_id=item.id %}">
+                            {{ item.change_request }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'restock_product' product_id=item.id %}">
+                            ተጨማሪ ገቢ
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+    </table>
+{% endblock content %}

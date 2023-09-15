@@ -1,0 +1,23 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <h3 class="mb-4">ወጪ ጠይቅ</h1>
+                {% if success %}
+                <p class="text-success">{{ success }}</p>
+                {% endif %}
+                <h4 class="mb-3">ሚጠየቅለት ዕቃ፡ {{ product.name }}</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="quantity">ብዛት:</label>
+                        <input type="number" class="form-control" name="quantity" step="0.01" min="0.01" max="{{ product.quantity }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">ጠይቅ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
