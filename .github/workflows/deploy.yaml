@@ -1,34 +1,33 @@
-name: timebg_prod deploy to cPanel
+name: timebg ci/cd deploymeny
 
 on:
   push:
-    branches:
-      - timebg_prod
+    branches: [ "timebg_prod" ]
 
 jobs:
-  deploy:
+  build:
+
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
       with:
-        python-version: 3.8
-
-    - name: Install dependencies
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-        python manage.py collectstatic --noinput
-
-    - name: Deploy to cPanel
-      run: |
-        ssh ${{ secrets.TIMEBG_CPANEL_SSH_USER }}@${{ secrets.TIMEBG_CPANEL_HOST }} "cd /path/to/your/app && git pull origin timebg_prod
-      env:
-        CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
-        CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
-      secrets:
-        CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
-        CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+    - name: sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      with:
+        server: ftp.timecafecompany.com
+        username: ${{secrets.TIMEBG_FTP_USERNAME}}
+        password: ${{secrets.TIMEBG_FTP_PASSWORD}}
+        protocol: ftp
+        port: 21
