@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import Http404, HttpResponse
-from .models import HMSProduct, HMSTransactionType, HMSStockTransaction
+from .models import HMSProduct, HMSTransactionType, HMSStockTransaction, HMSCategory
 from .models import generate_case_id, HMSWarehouse
 from .forms import ProductForm, WarehouseForm
 from user_management.models import UserAccessLevel
@@ -27,6 +27,24 @@ def add_warehouse(request):
 
     return render(request, 'hms/add_warehouse.html')
 
+
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(
+        user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER])
+)
+def add_category(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        company = request.user.profile.company
+
+        category = HMSCategory.objects.create(
+            name=name, company=company
+        )
+
+        return redirect('power_user_dashboard')
+
+    return render(request, 'hms/add_warehouse.html')
 
 @login_required
 @user_passes_test(

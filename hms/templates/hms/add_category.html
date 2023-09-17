@@ -1,0 +1,17 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h2 class="mb-4">ስቶር አይነት ፎርም</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">የአይነቱ ስም:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">ጨምር</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
