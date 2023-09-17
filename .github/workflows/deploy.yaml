@@ -25,7 +25,7 @@ jobs:
 
     - name: Deploy to cPanel
       run: |
-        ssh ${{ secrets.CPANEL_SSH_USER }}@${{ secrets.CPANEL_HOST }} "cd /path/to/your/app && git pull origin main && python manage.py migrate && python manage.py restart"
+        ssh ${{ secrets.TIMEBG_CPANEL_SSH_USER }}@${{ secrets.TIMEBG_CPANEL_HOST }} "cd /path/to/your/app && git pull origin timebg_prod
       env:
         CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
         CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
