@@ -44,7 +44,7 @@ def add_category(request):
 
         return redirect('power_user_dashboard')
 
-    return render(request, 'hms/add_warehouse.html')
+    return render(request, 'hms/add_category.html')
 
 @login_required
 @user_passes_test(
