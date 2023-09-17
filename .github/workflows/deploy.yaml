@@ -3,7 +3,7 @@ name: timebg_prod deploy to cPanel
 on:
   push:
     branches:
-      - timebg_prof
+      - timebg_prod
 
 jobs:
   deploy:
