@@ -1,0 +1,22 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+<h3>የዕቃው ስም: {{ inventory_item.name }}</h1>
+  <p>ያለው ብዛት: {{ inventory_item.quantity_on_hand }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+      <label for="restock_quantity">የሚወጣው ብዛት:</label>
+      <input type="number" name="move_quantity" class="form-control" required step="0.01">
+
+      <select class="form-control" name="destination_id" required>
+        <option value="" disabled selected>Select a destination</option>
+        {% for choice in destination %}
+          <option value="{{ choice.id }}">{{ choice.name }}</option>
+        {% endfor %}
+      </select>
+  </div>
+  <button type="submit" class="btn btn-primary mt-2">ወጪ አድርግ</button>
+</form>
+{% endblock %}

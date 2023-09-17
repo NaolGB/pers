@@ -1,0 +1,10 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+  <h1>Add Inventory</h1>
+  <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Add Inventory</button>
+  </form>
+{% endblock %}

@@ -1,7 +1,10 @@
 {% extends 'platform_base.html' %}
 
 {% block content %}
+    <h3 class="mb-4">የተጠቃ ዝርዝር</h1>
+
     <div class="m-3">
+        {% comment %} hms {% endcomment %}
         <div class="btn-group" role="group" aria-label="Basic outlined example">
             <button 
                 type="button" class="btn btn-outline-primary"
@@ -20,6 +23,16 @@
                 onclick="window.location.href='{% url 'add_department'%}'"
             >
                 አዲስ የስራ ክፍል ጨምር
+            </button>
+        </div>
+
+        {% comment %} ims {% endcomment %}
+        <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <button 
+                type="button" class="btn btn-outline-primary"
+                onclick="window.location.href='{% url 'add_address'%}'"
+            >
+                አዲስ አድራሻ ጨምር
             </button>
         </div>
     </div>

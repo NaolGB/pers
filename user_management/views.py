@@ -38,11 +38,9 @@ def company_signup(request):
     return render(request, 'user_management/company_signup.html')
 
 def user_login(request):
-    error_message = None
-
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         
         # invalid login credentials
@@ -64,7 +62,7 @@ def user_login(request):
         logout(request)
         return redirect('user_login')
 
-    return render(request, 'user_management/login.html', {'error_message': error_message})
+    return render(request, 'user_management/login.html')
 
 
 @login_required

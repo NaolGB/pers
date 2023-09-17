@@ -20,7 +20,8 @@ def add_warehouse(request):
         company = request.user.profile.company
 
         warehouse = HMSWarehouse.objects.create(
-            name=name, location=location, company=company)
+            name=name, location=location, company=company
+        )
 
         return redirect('power_user_dashboard')
 
@@ -29,8 +30,11 @@ def add_warehouse(request):
 
 @login_required
 @user_passes_test(
-    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
-    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
 )
 def add_product(request):
     if request.method == 'POST':
@@ -52,8 +56,11 @@ def add_product(request):
 
 @login_required
 @user_passes_test(
-    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
-    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
 )
 def product_list(request):
     """the dashboard for warehouse manager"""
@@ -66,8 +73,11 @@ def product_list(request):
 
 @login_required
 @user_passes_test(
-    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
-    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
 )
 def restock_product(request, product_id):
     error_message = None
@@ -126,8 +136,11 @@ def request_checkout(request, product_id):
 
 @login_required
 @user_passes_test(
-    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
-    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
 )
 def product_transaction_list(request, product_id):
     product = HMSProduct.objects.get(pk=product_id)
@@ -159,8 +172,11 @@ def product_transaction_list(request, product_id):
 
 @login_required
 @user_passes_test(
-    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
-    has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
 )
 def close_checkout(request, transaction_id):
     checkout_transaction = get_object_or_404(HMSStockTransaction,

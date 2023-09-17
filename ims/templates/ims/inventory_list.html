@@ -6,7 +6,7 @@
         <div class="btn-group" role="group" aria-label="Basic outlined example">
             <button 
                 type="button" class="btn btn-outline-primary"
-                onclick="window.location.href='{% url 'add_product'%}'"
+                onclick="window.location.href='{% url 'add_inventory'%}'"
             >
                 አዲስ ዕቃ ጨምር
             </button>
@@ -20,26 +20,34 @@
               <th scope="col">ስም</th>
               <th scope="col">አይነት</th>
               <th scope="col">ብዛት</th>
-              <th scope="col">የጥያቄ ብዛት</th>
-              <th scope="col">ጭማሪ</th>
+              <th scope="col">አድራሻ</th>
+              <th scope="col">ተጨማሪ ገቢ</th>
+              <th scope="col">ወጪ</th>
+              <th scope="col">አድራሻ ቅያሪ</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in all_inventory %}
+            {% for item in inventory_items %}
                 <tr>
                     <th scope="row" class="col-1">{{forloop.counter}}</th>
                     <td>{{ item.name }}</td>
                     <td>{{ item.sku }}</td>
-                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.quantity_on_hand }}</td>
+                    <td>{{ item.address }}</td>
                     <td>
-                        <a href="{% url 'product_transaction_list' product_id=item.id %}">
-                            {{ item.change_request }}
+                        <a href="{% url 'restock_inventory' inventory_id=item.id %}">
+                          ተጨማሪ ገቢ
                         </a>
                     </td>
                     <td>
-                        <a href="{% url 'restock_product' product_id=item.id %}">
-                            ተጨማሪ ገቢ
+                        <a href="{% url 'checkout_inventory' inventory_id=item.id %}">
+                            ወጪ
                         </a>
+                    </td>
+                    <td>
+                      <a href="{% url 'move_inventory' inventory_id=item.id %}">
+                          አድራሻ ቀይር
+                      </a>
                     </td>
                 </tr>
             {% endfor %}

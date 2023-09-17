@@ -1,0 +1,22 @@
+{% extends 'platform_base.html' %}
+
+{% block content %}
+  <div class="mt-5">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h3 class="mb-4">አዲስ አድራሻ መጨመሪያ ፎርም</h3>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="የቦታው ስም" required>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="location" placeholder="የቦታው አድራሻ" required>
+          </div>
+          <input type="hidden" name="company" value="{{ request.user.profile.company.id }}">
+          <button type="submit" class="btn btn-primary mt-2">ጨምር</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

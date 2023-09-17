@@ -35,7 +35,7 @@ class UserRole(models.Model):
 
     def __str__(self):
         return f'{self.app} | {self.name}'
-
+    
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=250, unique=True, blank=False)

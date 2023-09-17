@@ -5,20 +5,26 @@ class Command(BaseCommand):
     help = 'Populate UserRole with data'
 
     def handle(self, *args, **kwargs):
-        # hms roles
-        hms_roles = [
+        roles = [
+            # hms roles
             ['hms',  'HMS-WRH', 'Warehouse'],
-            ['hms',  'HMS-SUR', 'Superuser/Administrator Role'],
+            ['hms',  'HMS-SUR', 'Superuser/Administrator'],
             ['hms',  'HMS-KCN', 'Kitchen'],
             ['hms',  'HMS-SVR', 'Supervisor'],
-            ['hms',  'HMS-UAN', 'Unassigned'],
+
+            # ims roles
+            ['ims',  'IMS-WRH', 'Warehouse'],
+            ['ims',  'IMS-MBR', 'Member'],
+
+            # others
+            ['NUL',  'NUL-NUL', 'Unassigned'],
         ]
 
-        for hms_role in hms_roles: 
+        for role in roles: 
             UserRole.objects.create(
-                app = hms_role[0],
-                code = hms_role[1],
-                name = hms_role[2]
+                app = role[0],
+                code = role[1],
+                name = role[2]
             )
 
         self.stdout.write(self.style.SUCCESS('UserRole data populated successfully'))

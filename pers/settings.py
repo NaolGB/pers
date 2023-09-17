@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'landing',
     'user_management',
     'hms',
+    'ims',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +50,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                'user_management.context_processors.user_context', 
+                # 'user_management.context_processors.recent_actions',
             ],
         },
     },

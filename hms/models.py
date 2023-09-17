@@ -70,6 +70,6 @@ class HMSStockTransaction(models.Model):
         constraints = [
             models.CheckConstraint(
                 check=models.Q(quantity__gte=0),
-                name='positive_float_value'
+                name='hms_transaction_positive_float_value'
             )
         ]
