@@ -1,4 +1,4 @@
-name: timebg ci/cd deploymeny
+name: timebg ci/cd deployment
 
 on:
   push:
