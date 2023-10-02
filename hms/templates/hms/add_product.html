@@ -6,7 +6,7 @@
         <form method="post" id="hms-add-product-form">
             {% csrf_token %}
             {{ form.as_p }}
-            <button id="submit-new-product" type="submit">Add Product</button>
+            <button id="submit-new-product" type="submit" class="btn btn-primary">Add Product</button>
         </form>
     </div>
 {% endblock content %}
