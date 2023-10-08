@@ -61,7 +61,7 @@ def add_product(request):
             # save product
             product = form.save()
 
-            return HttpResponse('Successful update')
+            return redirect('power_user_dashboard')
     else:
         form = ProductForm()
 
