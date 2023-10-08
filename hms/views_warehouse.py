@@ -61,7 +61,7 @@ def add_product(request):
             # save product
             product = form.save()
 
-            return redirect('power_user_dashboard')
+            return redirect('product_list')
     else:
         form = ProductForm()
 
