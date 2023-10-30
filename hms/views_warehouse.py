@@ -85,7 +85,6 @@ def product_list(request):
     context = {
         'all_inventory': HMSProduct.objects.all().order_by('-change_request'),
     }
-    print(context['all_inventory'])
     return render(request, 'hms/product_list.html', context)
 
 
