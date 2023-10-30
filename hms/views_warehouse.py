@@ -196,6 +196,28 @@ def product_transaction_list(request, product_id):
         has_role(user, ['HMS-WRH', 'HMS-SUR'])
     )
 )
+def product_transaction_list_admin(request):
+
+    # filter by case_id which are not closed
+    checkout_request_transactions = HMSStockTransaction.objects.filter(
+        transaction=HMSTransactionType.CHECKOUT_APPROVE
+    ).order_by('-timestamp')[:1000]
+
+    context = {
+        'transactions': checkout_request_transactions,
+    }
+
+    return render(request, 'hms/product_transaction_list_admin.html', context)
+
+
+@login_required
+@user_passes_test(
+    lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER]) or
+    (
+        lambda user: has_access_level(user, [UserAccessLevel.SUPERUSER, UserAccessLevel.POWER_USER, UserAccessLevel.FUNCTIONAL_LEADER]) and
+        has_role(user, ['HMS-WRH', 'HMS-SUR'])
+    )
+)
 def close_checkout(request, transaction_id):
     checkout_transaction = get_object_or_404(HMSStockTransaction,
                                              transaction_id=transaction_id, transaction=HMSTransactionType.CHECKOUT_REQUEST)

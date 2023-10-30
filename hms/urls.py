@@ -11,6 +11,7 @@ urlpatterns = [
     path('request-checkout/<uuid:product_id>/', views_warehouse.request_checkout, name='request_checkout'),
     path('close-checkout/<uuid:transaction_id>/', views_warehouse.close_checkout, name='close_checkout'),
     path('product/<uuid:product_id>/transactions/', views_warehouse.product_transaction_list, name='product_transaction_list'),
+    path('product/transactions/', views_warehouse.product_transaction_list_admin, name='product_transaction_list_admin'),
 
     # kitchen
     path('kitchen-dahshboard/', view=views_kitchen.kitchen_dashboard, name='kitchen_dashboard'),
