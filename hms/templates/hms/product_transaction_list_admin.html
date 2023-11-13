@@ -6,8 +6,9 @@
         <thead>
             <tr>
                 <th scope="col" class="col-1">ተራ ቁ.</th>
+                <th scope="col">እቃው</th>
+                <th scope="col">ብዛት</th>
                 <th scope="col">የጥያቄው አይነት</th>
-                <th scope="col">ዝርዝር</th>
                 <th scope="col">ጠያቂ</th>
                 <th scope="col">የተጠቀበት ሰዐት</th>
                 <th scope="col">የተጠየቀው ብዛት</th>
@@ -17,8 +18,9 @@
             {% for transaction in transactions %}
                 <tr>
                     <th scope="row" class="col-1">{{forloop.counter}}</th>
+                    <td scope="col">{{ transaction.product.name}}</td>
+                    <td scope="col">{{ transaction.quantity }}</td>
                     <td scope="col">{{ transaction.get_transaction_display }}</td>
-                    <td scope="col">{{ transaction.description }}</td>
                     <td scope="col">{{ transaction.user.username }}</td>
                     <td scope="col">{{ transaction.timestamp }}</td>
                     <td scope="col">{{ transaction.quantity }}</td>
